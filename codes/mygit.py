@@ -1,9 +1,7 @@
 import argparse
 from src.init import init
 from src.add import add
-
-def commit(message):
-    print(f"Committed with message: '{message}'")
+from src.commit import commit
 
 def status():
     print("Status: No changes to commit.")

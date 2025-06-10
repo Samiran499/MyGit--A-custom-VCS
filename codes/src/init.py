@@ -11,5 +11,7 @@ def init():
 
     with open(".mygit/index", "w") as index:
         pass
+    with open(".mygit/HEAD", "w") as head:
+        pass
 
     print("MyGit repo initialized!")
