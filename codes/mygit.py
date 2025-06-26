@@ -2,12 +2,9 @@ import argparse
 from src.init import init
 from src.add import add
 from src.commit import commit
-
-def status():
-    print("Status: No changes to commit.")
-
-def log():
-    print("Showing commit history...")
+from src.status import status
+from src.log import log
+from src.checkout import checkout
 
 def main():
     parser = argparse.ArgumentParser(description="MyGit- A simple VCS")
@@ -30,6 +27,10 @@ def main():
     # log
     subparsers.add_parser("log", help="Show commit history")
 
+    # checkout
+    parser_checkout = subparsers.add_parser("checkout", help="Checkout to an old commit")
+    parser_checkout.add_argument("commit_hash", help="Hash of an old commit")
+
     args = parser.parse_args()
 
     # Command dispatch
@@ -43,6 +44,8 @@ def main():
         status()
     elif args.command == "log":
         log()
+    elif args.command == "checkout":
+        checkout(args.commit_hash)
 
 if __name__ == "__main__":
     main()
