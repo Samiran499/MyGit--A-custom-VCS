@@ -1,10 +1,15 @@
+#!/usr/bin/env python3
+
 import argparse
+import os
 from src.init import init
 from src.add import add
 from src.commit import commit
 from src.status import status
 from src.log import log
 from src.checkout import checkout
+from src.branch import branch, show_branch
+from src.root_finder import get_repo_root
 
 def main():
     parser = argparse.ArgumentParser(description="MyGit- A simple VCS")
@@ -28,8 +33,13 @@ def main():
     subparsers.add_parser("log", help="Show commit history")
 
     # checkout
-    parser_checkout = subparsers.add_parser("checkout", help="Checkout to an old commit")
-    parser_checkout.add_argument("commit_hash", help="Hash of an old commit")
+    parser_checkout = subparsers.add_parser("checkout", help="Checkout to a branch or commit")
+    parser_checkout.add_argument("target", nargs="?", help="Branch name or commit hash")
+    parser_checkout.add_argument("-b", "--branch", help="Create a new branch and checkout to it")
+
+    # branch
+    parser_branch = subparsers.add_parser("branch", help="Create a new branch")
+    parser_branch.add_argument("branch_name", nargs="?", help="Name of the new branch")
 
     args = parser.parse_args()
 
@@ -45,7 +55,20 @@ def main():
     elif args.command == "log":
         log()
     elif args.command == "checkout":
-        checkout(args.commit_hash)
+        if args.branch:
+            # Check if branch already exists before creating
+            repo_root = get_repo_root()
+            branch_path = os.path.join(repo_root, ".mygit/refs/head", args.branch)
+            if not os.path.exists(branch_path):
+                branch(args.branch, start_point=args.target)
+            checkout(args.branch)
+        else:
+            checkout(args.target)
+    elif args.command == "branch":
+        if not args.branch_name:
+            show_branch()
+        else:
+            branch(args.branch_name)
 
 if __name__ == "__main__":
     main()
